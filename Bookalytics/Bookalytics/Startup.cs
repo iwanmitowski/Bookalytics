@@ -39,11 +39,11 @@ namespace Bookalytics
             {
                 mc.AddProfile(new MappingProfile());
             });
-
             IMapper mapper = mapperConfig.CreateMapper();
 
             services.AddSingleton(mapper);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Bookalytics")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
