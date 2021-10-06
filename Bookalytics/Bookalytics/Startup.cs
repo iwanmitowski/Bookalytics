@@ -1,6 +1,8 @@
 using AutoMapper;
 using Bookalytics.Data;
 using Bookalytics.Mapper;
+using Bookalytics.Services;
+using Bookalytics.Services.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,7 +28,6 @@ namespace Bookalytics
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews(options =>
@@ -43,10 +44,10 @@ namespace Bookalytics
 
             services.AddSingleton(mapper);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Bookalytics")));
-
+            services.AddTransient<IBookScrapperService, BookScrapperService>();
+            services.AddTransient<IBookAnalyzerService, BookAnalyzerService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

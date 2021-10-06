@@ -9,7 +9,7 @@ namespace Bookalytics.Data.Models
         [Required]
         public string Author { get; set; }
 
-        public int Year { get; set; }
+        public int? Year { get; set; }
 
         public string ImageUrl { get; set; }
 

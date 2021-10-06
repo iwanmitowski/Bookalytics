@@ -11,9 +11,8 @@ namespace Bookalytics.Services
     {
         private readonly List<string> words;
         private readonly ConcurrentDictionary<string, int> wordsAppearances;
-        public BookAnalyzerService(string bookText)
+        public BookAnalyzerService()
         {
-            this.BookText = bookText;
             wordsAppearances = new ConcurrentDictionary<string, int>();
             words = GetWords();
             WordsAppearances();
@@ -22,6 +21,10 @@ namespace Bookalytics.Services
 
         public string BookText { get; set; }
 
+        public void GetText(string bookText)
+        {
+            this.BookText = bookText;
+        }
         public double AverageWordLength()
         {
             return words.Select(x => x.Length).Average();

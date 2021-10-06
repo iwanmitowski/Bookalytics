@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,8 @@ namespace Bookalytics.Services.Contracts
 {
     public interface IBookAnalyzerService
     {
-        public IDictionary<string, int> GetDict();
+        public void GetText(string bookText);
+        public ConcurrentDictionary<string, int> GetDict();
         public int GetWordsCount();
         public string GetShortestWord();
         public string GetLongestWord();
