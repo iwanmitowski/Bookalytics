@@ -17,6 +17,6 @@ namespace Bookalytics.Services.Contracts
         public int GetMostCommonWordCount(string word);
         public string GetLeastCommonWord();
         public int GetLeastCommonWordCount(string word);
-        public double AverageWordLength();
+        public double GetAverageWordLength();
     }
 }

@@ -9,10 +9,10 @@ namespace Bookalytics.Services.Contracts
     public interface IBookScrapperService
     {
         public Task<IDocument> GetDocumentAsync(int i);
-        public IElement GetAuthor(IDocument document);
-        public IElement GetCategory(IDocument document);
-        public IElement GetYear(IDocument document);
-        public IElement GetTitle(IDocument document);
+        public string GetAuthor(IDocument document);
+        public string GetCategory(IDocument document);
+        public int? GetYear(IDocument document);
+        public string GetTitle(IDocument document);
         public string GetImgUrl(IDocument document);
         public string GetText(IDocument document);
     }

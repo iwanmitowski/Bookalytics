@@ -32,41 +32,48 @@ namespace Bookalytics.Services
             return await context.OpenAsync(url);
         }
 
-        public IElement GetAuthor(IDocument document)
+        public string GetAuthor(IDocument document)
         {
             var author = document
                     .QuerySelectorAll(QuerySelectorAuthor)
                     .FirstOrDefault();
 
-            return author;
+            return author?.TextContent;
         }
 
-        public IElement GetCategory(IDocument document)
+        public string GetCategory(IDocument document)
         {
             var category = document
                     .QuerySelectorAll(QuerySelectorCategory)
                     .FirstOrDefault();
 
-            return category;
+            return category?.TextContent;
         }
 
-        public IElement GetYear(IDocument document)
+        public int? GetYear(IDocument document)
         {
             var year = document
                     .QuerySelectorAll("span")
                     .Where(x => x.GetAttribute("itemProp") == "datePublished")
                     .FirstOrDefault();
 
-            return year;
+            int yearAsInt;
+
+            if (!int.TryParse(year?.TextContent, out yearAsInt))
+            {
+                return null;
+            }
+
+            return yearAsInt;
         }
 
-        public IElement GetTitle(IDocument document)
+        public string GetTitle(IDocument document)
         {
             var title = document.QuerySelectorAll("i")
                    .Where(x => x.GetAttribute("itemProp") == "name")
                    .FirstOrDefault();
 
-            return title;
+            return title?.TextContent;
         }
 
         public string GetImgUrl(IDocument document)

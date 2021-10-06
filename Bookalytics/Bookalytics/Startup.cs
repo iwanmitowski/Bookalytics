@@ -1,6 +1,7 @@
 using AutoMapper;
 using Bookalytics.Data;
 using Bookalytics.Mapper;
+using Bookalytics.Seeding;
 using Bookalytics.Services;
 using Bookalytics.Services.Contracts;
 using Microsoft.AspNetCore.Builder;
@@ -45,11 +46,19 @@ namespace Bookalytics
             services.AddSingleton(mapper);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Bookalytics")));
             services.AddTransient<IBookScrapperService, BookScrapperService>();
-            services.AddTransient<IBookAnalyzerService, BookAnalyzerService>();
+            services.AddScoped<IBookAnalyzerService, BookAnalyzerService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //Seeding books on application startup
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.Migrate();
+                new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -59,6 +68,7 @@ namespace Bookalytics
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
