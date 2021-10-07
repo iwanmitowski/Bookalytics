@@ -9,7 +9,7 @@ namespace Bookalytics.Seeding.Contracts
 {
     public interface IBookPreparer
     {
-        public Task GetBooks(ApplicationDbContext dbContext, IServiceProvider serviceProvider);
-        public void FillBooksData(IBookAnalyzerService bookAnalyzerService);
+        public void GetBooks(ApplicationDbContext dbContext, IServiceProvider serviceProvider);
+        public void FillBooksData(IServiceProvider serviceProvider);
     }
 }

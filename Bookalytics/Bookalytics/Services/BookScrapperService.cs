@@ -4,6 +4,7 @@ using Bookalytics.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -89,9 +90,37 @@ namespace Bookalytics.Services
         public string GetText(IDocument document)
         {
             var querySelector = new StringBuilder().Append("div > #textstart");
+            //string outherHtml = document.QuerySelector(querySelector.ToString()) == null ? null : document.QuerySelector(querySelector.ToString()).OuterHtml;
 
-            while (!document.QuerySelector(querySelector.ToString()).OuterHtml.Contains("p"))
+            //if (outherHtml == null)
+            //{
+            //    return null;
+            //}
+
+            //while (!outherHtml.Contains("p"))
+            //{
+            //    querySelector.Append(" > div");
+            //    outherHtml = document.QuerySelector(querySelector.ToString()).OuterHtml;
+
+            //    if (outherHtml == null)
+            //    {
+            //        return null;
+            //    }
+            //}
+
+            while (true)
             {
+                string outherHtml = document.QuerySelector(querySelector.ToString()) == null ? null : document.QuerySelector(querySelector.ToString()).OuterHtml;
+
+                if (outherHtml == null)
+                {
+                    return null;
+                }
+                else if (outherHtml.Contains("p"))
+                {
+                    break;
+                }
+
                 querySelector.Append(" > div");
             }
 
@@ -120,30 +149,5 @@ namespace Bookalytics.Services
 
             return bookTextWithoutNotes;
         }
-
-        //public async Task Main()
-        //{
-        //    for (int i = 0; i < 1; i++)
-        //    {
-        //        var url = string.Format(BaseUrl,i);
-        //        var document = await context.OpenAsync(url);
-
-
-        //        if (author != null)
-        //        {
-        //            Console.WriteLine("Title " + title.TextContent.Trim());
-        //            Console.WriteLine("Category " + category.TextContent.Trim());
-        //            Console.WriteLine("Author " + author.TextContent.Trim());
-        //            Console.WriteLine("Year " + year.TextContent == null ? "n/a" : year.TextContent.Trim());
-        //            Console.WriteLine("Url " + imgUrl);
-        //            Console.WriteLine(new string('=', 50));
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Null Author");
-        //        }
-        //    }
-        //}
-
     }
 }

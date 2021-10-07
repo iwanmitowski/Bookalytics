@@ -12,12 +12,16 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using AutoMapper;
 using Bookalytics.Data.Models;
 using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using AngleSharp.Dom;
+using System.Threading;
 
 namespace Bookalytics.Seeding
 {
     public class BooksSeeder : ISeeder, IBookPreparer
     {
-        private int BaseSeedingCount = 2500;
+        private const int BaseSeedingCount = 300;
         private const string BaseUrl = "https://chitanka.info/text/{0}/0";
 
         private readonly ConcurrentBag<BookInputModel> bookInputs;
@@ -27,7 +31,7 @@ namespace Bookalytics.Seeding
             this.bookInputs = new ConcurrentBag<BookInputModel>();
         }
 
-        public async Task GetBooks(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
+        public void GetBooks(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
         {
             if (dbContext.Books.Any())
             {
@@ -36,36 +40,62 @@ namespace Bookalytics.Seeding
 
             var scrapperService = serviceProvider.GetService<IBookScrapperService>();
 
-            for (int i = 1; i <= 5; i++)
+            var listOfThreads = new List<Thread>()
             {
-                var url = string.Format(BaseUrl, i);
+                new Thread(() => GenerateBooks(scrapperService, 1, BaseSeedingCount)),
+                new Thread(() => GenerateBooks(scrapperService, 4 * BaseSeedingCount, 5 * BaseSeedingCount)),
+            };
 
-                var document = await scrapperService.GetDocumentAsync(i);
-
-                var author = scrapperService.GetAuthor(document);
-
-                var text = scrapperService.GetText(document);
-
-                if (author == null || text == null)
-                {
-                    continue;
-                    //return;  //Parallel for is like function
-                }
-
-                var year = scrapperService.GetYear(document);
-                var imgUrl = scrapperService.GetImgUrl(document);
-
-                var currentBook = new BookInputModel();
-                currentBook.Author = author;
-                currentBook.Text = text;
-
-                bookInputs.Add(currentBook);
+            foreach (var thread in listOfThreads)
+            {
+                thread.Start();
             }
-            //Parallel.For(1, BaseSeedingCount, async i =>
-            //{
-                
-            //    i++;
-            //});
+
+            foreach (var thread in listOfThreads)
+            {
+                thread.Join();
+            }
+        }
+
+        private void GenerateBooks(IBookScrapperService scrapperService, int start, int end)
+        {
+            Parallel.For(start, end + 1, i =>
+            {
+                lock (new object())
+                {
+                    try
+                    {
+                        var currentBook = new BookInputModel();
+                        IDocument document;
+
+                        document = scrapperService.GetDocumentAsync(i).GetAwaiter().GetResult();
+
+                        var author = scrapperService.GetAuthor(document);
+                        var title = scrapperService.GetTitle(document);
+                        var text = scrapperService.GetText(document);
+
+                        if (author == null || text == null)
+                        {
+                            return;
+                        }
+
+                        var year = scrapperService.GetYear(document);
+                        var imgUrl = scrapperService.GetImgUrl(document);
+
+                        currentBook.Author = author;
+                        currentBook.Title = title;
+                        currentBook.Text = text;
+                        currentBook.Year = year;
+                        currentBook.ImageUrl = imgUrl;
+
+                        bookInputs.Add(currentBook);
+                    }
+                    catch (NullReferenceException)
+                    {
+                        //ignored
+                    }
+                }
+            });
         }
 
         public async Task SeedAsync(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
@@ -74,6 +104,7 @@ namespace Bookalytics.Seeding
             {
                 return;
             }
+
             var mapper = serviceProvider.GetService<IMapper>();
 
             var books = mapper.Map<IEnumerable<Book>>(bookInputs);
@@ -82,11 +113,28 @@ namespace Bookalytics.Seeding
             await dbContext.SaveChangesAsync();
         }
 
-        public void FillBooksData(IBookAnalyzerService bookAnalyzer)
+        public void FillBooksData(IServiceProvider serviceProvider)
         {
-            //Must be tested!!!
+            //TO DO  WITH BOOKS ALREADY IN DB IT WILL BE EASIER and more accurate!
+            var bookAnalyzer = serviceProvider.GetService<IBookAnalyzerService>();
 
-            //Parallel.ForEach(bookInputs, (book) =>
+            Parallel.ForEach(bookInputs, (book) =>
+            {
+                lock (new object())
+                {
+                    bookAnalyzer.GetText(book.Text);
+                    book.WordsCount = bookAnalyzer.GetWordsCount();
+                    book.ShortestWord = bookAnalyzer.GetShortestWord();
+                    book.LongestWord = bookAnalyzer.GetLongestWord();
+                    book.MostCommonWord = bookAnalyzer.GetMostCommonWord();
+                    book.MostCommonWordCount = bookAnalyzer.GetMostCommonWordCount(book.MostCommonWord);
+                    book.LeastCommonWord = bookAnalyzer.GetLeastCommonWord();
+                    book.LeastCommonWordCount = bookAnalyzer.GetLeastCommonWordCount(book.LeastCommonWord);
+                    book.AverageWordLength = bookAnalyzer.GetAverageWordLength();
+                }
+            });
+
+            //foreach (var book in bookInputs)
             //{
             //    bookAnalyzer.GetText(book.Text);
             //    book.WordsCount = bookAnalyzer.GetWordsCount();
@@ -97,20 +145,7 @@ namespace Bookalytics.Seeding
             //    book.LeastCommonWord = bookAnalyzer.GetLeastCommonWord();
             //    book.LeastCommonWordCount = bookAnalyzer.GetLeastCommonWordCount(book.LeastCommonWord);
             //    book.AverageWordLength = bookAnalyzer.GetAverageWordLength();
-            //});
-
-            foreach (var book in bookInputs)
-            {
-                bookAnalyzer.GetText(book.Text);
-                book.WordsCount = bookAnalyzer.GetWordsCount();
-                book.ShortestWord = bookAnalyzer.GetShortestWord();
-                book.LongestWord = bookAnalyzer.GetLongestWord();
-                book.MostCommonWord = bookAnalyzer.GetMostCommonWord();
-                book.MostCommonWordCount = bookAnalyzer.GetMostCommonWordCount(book.MostCommonWord);
-                book.LeastCommonWord = bookAnalyzer.GetLeastCommonWord();
-                book.LeastCommonWordCount = bookAnalyzer.GetLeastCommonWordCount(book.LeastCommonWord);
-                book.AverageWordLength = bookAnalyzer.GetAverageWordLength();
-            }
+            //}
         }
     }
 }

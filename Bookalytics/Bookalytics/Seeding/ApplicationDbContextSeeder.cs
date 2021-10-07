@@ -15,11 +15,10 @@ namespace Bookalytics.Seeding
         public async Task SeedAsync(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
         {
             var seeder = new BooksSeeder();
-            var bookAnalyzer = serviceProvider.GetService<IBookAnalyzerService>();
 
             //Start from here
-            await seeder.GetBooks(dbContext, serviceProvider);
-            seeder.FillBooksData(bookAnalyzer);
+            seeder.GetBooks(dbContext, serviceProvider);
+            seeder.FillBooksData(serviceProvider);
 
             await seeder.SeedAsync(dbContext, serviceProvider);
             await dbContext.SaveChangesAsync();

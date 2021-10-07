@@ -9,25 +9,26 @@ namespace Bookalytics.Services
 {
     public class BookAnalyzerService : IBookAnalyzerService
     {
-        private readonly List<string> words;
         private readonly ConcurrentDictionary<string, int> wordsAppearances;
+
         public BookAnalyzerService()
         {
             wordsAppearances = new ConcurrentDictionary<string, int>();
-            words = GetWords();
-            WordsAppearances();
         }
         public ConcurrentDictionary<string, int> GetDict() => this.wordsAppearances;
 
         public string BookText { get; set; }
+        public List<string> Words { get; set; }
 
         public void GetText(string bookText)
         {
             this.BookText = bookText;
+            Words = GetWords();
+            WordsAppearances();
         }
         public double GetAverageWordLength()
         {
-            return words.Select(x => x.Length).Average();
+            return Words.Select(x => x.Length).Average();
         }
 
         //Alphabetically
@@ -67,14 +68,14 @@ namespace Bookalytics.Services
         }
         public string GetShortestWord()
         {
-            var word = this.wordsAppearances.Keys.OrderBy(x => x.Length).ThenBy(x=>x).FirstOrDefault();
+            var word = this.wordsAppearances.Keys.OrderBy(x => x.Length).ThenBy(x => x).FirstOrDefault();
 
             return word;
         }
 
         public int GetWordsCount()
         {
-            var count = words.Count();
+            var count = Words.Count();
 
             return count;
         }
@@ -83,7 +84,7 @@ namespace Bookalytics.Services
 
         private void WordsAppearances()
         {
-            Parallel.ForEach(words, (currentWord) =>
+            Parallel.ForEach(Words, (currentWord) =>
             {
                 wordsAppearances.AddOrUpdate(currentWord, 1, (string x, int y) => y + 1);
             });

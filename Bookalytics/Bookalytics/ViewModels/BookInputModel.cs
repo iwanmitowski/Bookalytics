@@ -8,6 +8,8 @@ namespace Bookalytics.ViewModels
 {
     public class BookInputModel
     {
+        public string Title { get; set; }
+
         [Required]
         public string Author { get; set; }
 
