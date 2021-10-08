@@ -18,7 +18,7 @@ namespace Bookalytics.Seeding
 
             //Start from here
             seeder.GetBooks(dbContext, serviceProvider);
-            seeder.FillBooksData(serviceProvider);
+            //await seeder.FillBooksData(dbContext, serviceProvider);
 
             await seeder.SeedAsync(dbContext, serviceProvider);
             await dbContext.SaveChangesAsync();

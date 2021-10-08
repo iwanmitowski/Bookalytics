@@ -22,7 +22,6 @@ namespace Bookalytics.Seeding
     public class BooksSeeder : ISeeder, IBookPreparer
     {
         private const int BaseSeedingCount = 300;
-        private const string BaseUrl = "https://chitanka.info/text/{0}/0";
 
         private readonly ConcurrentBag<BookInputModel> bookInputs;
 
@@ -109,43 +108,30 @@ namespace Bookalytics.Seeding
 
             var books = mapper.Map<IEnumerable<Book>>(bookInputs);
 
+            FillBooksData(books, serviceProvider);
+
             await dbContext.AddRangeAsync(books);
             await dbContext.SaveChangesAsync();
         }
 
-        public void FillBooksData(IServiceProvider serviceProvider)
+        public void FillBooksData(IEnumerable<Book> books, IServiceProvider serviceProvider)
         {
             //TO DO  WITH BOOKS ALREADY IN DB IT WILL BE EASIER and more accurate!
+
             var bookAnalyzer = serviceProvider.GetService<IBookAnalyzerService>();
-
-            Parallel.ForEach(bookInputs, (book) =>
+            
+            foreach (var book in books)
             {
-                lock (new object())
-                {
-                    bookAnalyzer.GetText(book.Text);
-                    book.WordsCount = bookAnalyzer.GetWordsCount();
-                    book.ShortestWord = bookAnalyzer.GetShortestWord();
-                    book.LongestWord = bookAnalyzer.GetLongestWord();
-                    book.MostCommonWord = bookAnalyzer.GetMostCommonWord();
-                    book.MostCommonWordCount = bookAnalyzer.GetMostCommonWordCount(book.MostCommonWord);
-                    book.LeastCommonWord = bookAnalyzer.GetLeastCommonWord();
-                    book.LeastCommonWordCount = bookAnalyzer.GetLeastCommonWordCount(book.LeastCommonWord);
-                    book.AverageWordLength = bookAnalyzer.GetAverageWordLength();
-                }
-            });
-
-            //foreach (var book in bookInputs)
-            //{
-            //    bookAnalyzer.GetText(book.Text);
-            //    book.WordsCount = bookAnalyzer.GetWordsCount();
-            //    book.ShortestWord = bookAnalyzer.GetShortestWord();
-            //    book.LongestWord = bookAnalyzer.GetLongestWord();
-            //    book.MostCommonWord = bookAnalyzer.GetMostCommonWord();
-            //    book.MostCommonWordCount = bookAnalyzer.GetMostCommonWordCount(book.MostCommonWord);
-            //    book.LeastCommonWord = bookAnalyzer.GetLeastCommonWord();
-            //    book.LeastCommonWordCount = bookAnalyzer.GetLeastCommonWordCount(book.LeastCommonWord);
-            //    book.AverageWordLength = bookAnalyzer.GetAverageWordLength();
-            //}
+                bookAnalyzer.GetText(book.Text);
+                book.WordsCount = bookAnalyzer.GetWordsCount();
+                book.ShortestWord = bookAnalyzer.GetShortestWord();
+                book.LongestWord = bookAnalyzer.GetLongestWord();
+                book.MostCommonWord = bookAnalyzer.GetMostCommonWord();
+                book.MostCommonWordCount = bookAnalyzer.GetMostCommonWordCount(book.MostCommonWord);
+                book.LeastCommonWord = bookAnalyzer.GetLeastCommonWord();
+                book.LeastCommonWordCount = bookAnalyzer.GetLeastCommonWordCount(book.LeastCommonWord);
+                book.AverageWordLength = bookAnalyzer.GetAverageWordLength();
+            }
         }
     }
 }

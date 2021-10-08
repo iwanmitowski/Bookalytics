@@ -124,7 +124,12 @@ namespace Bookalytics.Services
                 querySelector.Append(" > div");
             }
 
-            querySelector.Append(" p");
+            if (!querySelector.ToString().Contains("p"))
+            {
+                querySelector.Append(" p");
+            }
+
+            //querySelector.Append(" p");
 
             var paragraphs = document
                 .QuerySelectorAll(querySelector.ToString());
@@ -143,7 +148,7 @@ namespace Bookalytics.Services
                 .ToList()
                 .ForEach(x => text.AppendLine(x.TextContent.Replace("\n", "").Replace("↑", "")));
 
-            //Replaces [xxxx]
+            //Replaces[xxxx]
             var notesRegex = new Regex(RemoveNotesPattern);
             var bookTextWithoutNotes = notesRegex.Replace(text.ToString(), string.Empty);
 

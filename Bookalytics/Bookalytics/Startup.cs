@@ -56,8 +56,7 @@ namespace Bookalytics
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 dbContext.Database.EnsureDeleted();  //REMOVE!!!!!!!!!!!!!!!!!
-                dbContext.Database.EnsureCreated();  //REMOVE!!!!!!!!!!!!!!!!!
-                //dbContext.Database.Migrate();
+                dbContext.Database.Migrate();
                 new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
             }
 

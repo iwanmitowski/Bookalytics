@@ -8,7 +8,7 @@ namespace Bookalytics.Services
 {
     public static class BookSerializer
     {
-        private const string Pattern = @"^[+-]?\d+[\p{L}’-]*$|[\p{L}\d’-]+|[„“][\p{L}\d’-]+[„“]-[\p{L}’-]+";
+        private const string Pattern = @"[+-]?\d+[\p{L}’-]*|[\p{L}\d’-]+|[„“][\p{L}\d’-]+[„“]-[\p{L}’-]+";
         private static List<string> words;
 
         public static void SplitWords(string text)
