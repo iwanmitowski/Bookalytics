@@ -46,7 +46,7 @@ namespace Bookalytics
             services.AddSingleton(mapper);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Bookalytics")));
             services.AddTransient<IBookScrapperService, BookScrapperService>();
-            services.AddScoped<IBookAnalyzerService, BookAnalyzerService>();
+            services.AddTransient<IBookAnalyzerService, BookAnalyzerService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

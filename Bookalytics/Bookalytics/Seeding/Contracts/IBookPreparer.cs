@@ -11,6 +11,6 @@ namespace Bookalytics.Seeding.Contracts
     public interface IBookPreparer
     {
         public void GetBooks(ApplicationDbContext dbContext, IServiceProvider serviceProvider);
-        public void FillBooksData(IEnumerable<Book> books, IServiceProvider serviceProvider);
+        public void FillBooksData(ICollection<Book> books, IServiceProvider serviceProvider);
     }
 }

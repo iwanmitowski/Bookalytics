@@ -90,24 +90,7 @@ namespace Bookalytics.Services
         public string GetText(IDocument document)
         {
             var querySelector = new StringBuilder().Append("div > #textstart");
-            //string outherHtml = document.QuerySelector(querySelector.ToString()) == null ? null : document.QuerySelector(querySelector.ToString()).OuterHtml;
-
-            //if (outherHtml == null)
-            //{
-            //    return null;
-            //}
-
-            //while (!outherHtml.Contains("p"))
-            //{
-            //    querySelector.Append(" > div");
-            //    outherHtml = document.QuerySelector(querySelector.ToString()).OuterHtml;
-
-            //    if (outherHtml == null)
-            //    {
-            //        return null;
-            //    }
-            //}
-
+            
             while (true)
             {
                 string outherHtml = document.QuerySelector(querySelector.ToString()) == null ? null : document.QuerySelector(querySelector.ToString()).OuterHtml;
@@ -128,8 +111,6 @@ namespace Bookalytics.Services
             {
                 querySelector.Append(" p");
             }
-
-            //querySelector.Append(" p");
 
             var paragraphs = document
                 .QuerySelectorAll(querySelector.ToString());

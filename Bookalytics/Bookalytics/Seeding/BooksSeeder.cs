@@ -21,7 +21,7 @@ namespace Bookalytics.Seeding
 {
     public class BooksSeeder : ISeeder, IBookPreparer
     {
-        private const int BaseSeedingCount = 300;
+        private const int BaseSeedingCount = 150;
 
         private readonly ConcurrentBag<BookInputModel> bookInputs;
 
@@ -106,20 +106,18 @@ namespace Bookalytics.Seeding
 
             var mapper = serviceProvider.GetService<IMapper>();
 
-            var books = mapper.Map<IEnumerable<Book>>(bookInputs);
+            var books = mapper.Map<ICollection<Book>>(bookInputs);
 
             FillBooksData(books, serviceProvider);
 
-            await dbContext.AddRangeAsync(books);
+            await dbContext.Books.AddRangeAsync(books);
             await dbContext.SaveChangesAsync();
         }
 
-        public void FillBooksData(IEnumerable<Book> books, IServiceProvider serviceProvider)
+        public void FillBooksData(ICollection<Book> books, IServiceProvider serviceProvider)
         {
-            //TO DO  WITH BOOKS ALREADY IN DB IT WILL BE EASIER and more accurate!
-
             var bookAnalyzer = serviceProvider.GetService<IBookAnalyzerService>();
-            
+
             foreach (var book in books)
             {
                 bookAnalyzer.GetText(book.Text);

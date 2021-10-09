@@ -24,6 +24,7 @@ namespace Bookalytics.Services
         {
             this.BookText = bookText;
             Words = GetWords();
+            wordsAppearances.Clear();
             WordsAppearances();
         }
         public double GetAverageWordLength()
