@@ -21,7 +21,6 @@ namespace Bookalytics.Seeding
             //await seeder.FillBooksData(dbContext, serviceProvider);
 
             await seeder.SeedAsync(dbContext, serviceProvider);
-            await dbContext.SaveChangesAsync();
         }
     }
 }

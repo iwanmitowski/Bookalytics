@@ -1,27 +1,22 @@
-using AutoMapper;
+using System.Reflection;
+
 using Bookalytics.Data;
-using Bookalytics.Mapper;
 using Bookalytics.Seeding;
 using Bookalytics.Services;
 using Bookalytics.Services.Contracts;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Bookalytics
 {
     public class Startup
     {
-        private readonly IMapper mapper;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -37,13 +32,9 @@ namespace Bookalytics
             });
 
             // Auto Mapper Configurations
-            var mapperConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            services.AddSingleton(mapper);
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Bookalytics")));
             services.AddTransient<IBookScrapperService, BookScrapperService>();
             services.AddTransient<IBookAnalyzerService, BookAnalyzerService>();

@@ -110,8 +110,11 @@ namespace Bookalytics.Seeding
 
             FillBooksData(books, serviceProvider);
 
-            await dbContext.Books.AddRangeAsync(books);
-            await dbContext.SaveChangesAsync();
+            foreach (var book in books)
+            {
+                await dbContext.Books.AddAsync(book);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
         public void FillBooksData(ICollection<Book> books, IServiceProvider serviceProvider)
