@@ -69,7 +69,7 @@ namespace Bookalytics.Seeding
 
                         document = scrapperService.GetDocumentAsync(i).GetAwaiter().GetResult();
 
-                        var author = scrapperService.GetAuthor(document);
+                        var author = scrapperService.GetAuthor(document).Replace("\n\t\t\t", " ").Trim();
                         var title = scrapperService.GetTitle(document);
                         var text = scrapperService.GetText(document);
 
