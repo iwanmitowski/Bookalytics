@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 
 using Bookalytics.Data;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace Bookalytics
 {
@@ -38,6 +40,17 @@ namespace Bookalytics
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Bookalytics")));
             services.AddTransient<IBookScrapperService, BookScrapperService>();
             services.AddTransient<IBookAnalyzerService, BookAnalyzerService>();
+
+            //Swagger
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Bookalytics API",
+                    Description = "An ASP.NET Core Web API for books",
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -46,7 +59,7 @@ namespace Bookalytics
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.EnsureDeleted();  //REMOVE!!!!!!!!!!!!!!!!!
+                //dbContext.Database.EnsureDeleted();  //REMOVE!!!!!!!!!!!!!!!!!
                 dbContext.Database.Migrate();
                 new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
             }
@@ -54,6 +67,12 @@ namespace Bookalytics
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    options.RoutePrefix = string.Empty;
+                });
             }
             else
             {

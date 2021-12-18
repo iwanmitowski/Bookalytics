@@ -110,6 +110,7 @@ namespace Bookalytics.Seeding
 
             FillBooksData(books, serviceProvider);
 
+            //Adding one by one because it caused db problems
             foreach (var book in books)
             {
                 await dbContext.Books.AddAsync(book);
