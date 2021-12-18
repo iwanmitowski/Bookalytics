@@ -13,6 +13,7 @@ namespace Bookalytics.Mapper
         public MappingProfile()
         {
             this.CreateMap<BookInputModel, Book>();
+            this.CreateMap<Book, BookViewModel>();
         }
     }
 }

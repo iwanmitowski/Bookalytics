@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Bookalytics.Data.Models;
+using Bookalytics.ViewModels;
+
 namespace Bookalytics.Services.Contracts
 {
     public interface IBookAnalyzerService
@@ -18,5 +21,6 @@ namespace Bookalytics.Services.Contracts
         public string GetLeastCommonWord();
         public int GetLeastCommonWordCount(string word);
         public double GetAverageWordLength();
+        public Book Analyze(AddBookInputModel bookInputModel);
     }
 }

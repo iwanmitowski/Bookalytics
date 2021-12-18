@@ -1,4 +1,7 @@
-﻿using Bookalytics.Services.Contracts;
+﻿using Bookalytics.Data.Models;
+using Bookalytics.Services.Contracts;
+using Bookalytics.ViewModels;
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -79,6 +82,24 @@ namespace Bookalytics.Services
             var count = Words.Count();
 
             return count;
+        }
+
+        public Book Analyze(AddBookInputModel bookInputModel)
+        {
+            var book = new Book();
+
+            GetText(bookInputModel.Text);
+
+            book.WordsCount = GetWordsCount();
+            book.ShortestWord = GetShortestWord();
+            book.LongestWord = GetLongestWord();
+            book.MostCommonWord = GetMostCommonWord();
+            book.MostCommonWordCount = GetMostCommonWordCount(book.MostCommonWord);
+            book.LeastCommonWord = GetLeastCommonWord();
+            book.LeastCommonWordCount = GetLeastCommonWordCount(book.LeastCommonWord);
+            book.AverageWordLength = GetAverageWordLength();
+
+            return book;
         }
 
         private List<string> GetWords() => BookSerializer.ReturnWordsToUpper(this.BookText);
