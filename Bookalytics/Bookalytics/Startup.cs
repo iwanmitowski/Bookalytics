@@ -32,6 +32,10 @@ namespace Bookalytics
             {
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "X-CSRF-TOKEN";
+            });
 
             // Auto Mapper Configurations
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

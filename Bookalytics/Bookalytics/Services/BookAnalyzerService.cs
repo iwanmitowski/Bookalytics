@@ -90,6 +90,11 @@ namespace Bookalytics.Services
 
             GetText(bookInputModel.Text);
 
+            book.Title = bookInputModel.Title;
+            book.Author = bookInputModel.Author;
+            book.Year = bookInputModel.Year;
+            book.ImageUrl = bookInputModel.ImageUrl;
+            book.Text = bookInputModel.Text;
             book.WordsCount = GetWordsCount();
             book.ShortestWord = GetShortestWord();
             book.LongestWord = GetLongestWord();

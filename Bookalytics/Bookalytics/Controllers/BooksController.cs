@@ -18,6 +18,7 @@ namespace Bookalytics.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [IgnoreAntiforgeryToken] //With AntiforgeryToken the server returns 400 BadRequest
     public class BooksController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
@@ -66,21 +67,17 @@ namespace Bookalytics.Controllers
 
         //POST api/books
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BookViewModel))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddBook(AddBookInputModel input)
+        public async Task<IActionResult> AddBook(AddBookInputModel input)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest();
-            //}
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(this.ModelState);
+            }
 
-            var book = new Book();
+            var book = bookAnalyzerService.Analyze(input);
 
-            book.Text = input.Text;
-
-            //await dbContext.Books.AddAsync(book);
-            //await dbContext.SaveChangesAsync();
+            await dbContext.Books.AddAsync(book);
+            await dbContext.SaveChangesAsync();
 
             var response = mapper.Map<BookViewModel>(book);
 
