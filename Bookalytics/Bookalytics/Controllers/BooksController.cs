@@ -84,5 +84,25 @@ namespace Bookalytics.Controllers
             return Ok(response);
         }
 
+        //PUT api/books/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBook(int id, UpdateBookInputModel inputModel)
+        {
+            var originalBook = await dbContext.Books.FindAsync(id);
+
+            if (!ModelState.IsValid || originalBook == null)
+            {
+                return BadRequest();
+            }
+
+            originalBook.Title = inputModel.Title;
+            originalBook.Author = inputModel.Author;
+            originalBook.Year = inputModel.Year;
+            originalBook.ImageUrl = inputModel.ImageUrl;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(originalBook);
+        }
     }
 }
