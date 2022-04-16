@@ -44,7 +44,7 @@ namespace Bookalytics
             services.AddTransient<IBookScrapperService, BookScrapperService>();
             services.AddTransient<IBookAnalyzerService, BookAnalyzerService>();
 
-            //Swagger
+            //Swagger configurations
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
