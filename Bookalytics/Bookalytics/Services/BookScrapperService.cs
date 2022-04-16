@@ -1,13 +1,12 @@
-﻿using AngleSharp;
-using AngleSharp.Dom;
-using Bookalytics.Services.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
+﻿using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+using AngleSharp;
+using AngleSharp.Dom;
+
+using Bookalytics.Services.Contracts;
 
 namespace Bookalytics.Services
 {

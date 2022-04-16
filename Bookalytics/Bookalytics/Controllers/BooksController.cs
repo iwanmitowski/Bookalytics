@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 
 using Bookalytics.Data;
-using Bookalytics.Data.Models;
 using Bookalytics.Services.Contracts;
 using Bookalytics.ViewModels;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace Bookalytics.Controllers
 {
@@ -84,7 +82,7 @@ namespace Bookalytics.Controllers
             return Ok(response);
         }
 
-        //PUT api/books/{id}
+        //PUT api/books/{id} 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBook(int id, UpdateBookInputModel inputModel)
         {

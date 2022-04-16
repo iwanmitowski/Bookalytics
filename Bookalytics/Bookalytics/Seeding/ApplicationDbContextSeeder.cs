@@ -1,12 +1,8 @@
-﻿using Bookalytics.Data;
-using Bookalytics.Seeding.Contracts;
-using Bookalytics.Services.Contracts;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
 using System.Threading.Tasks;
+
+using Bookalytics.Data;
+using Bookalytics.Seeding.Contracts;
 
 namespace Bookalytics.Seeding
 {

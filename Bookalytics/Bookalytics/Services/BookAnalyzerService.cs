@@ -1,12 +1,11 @@
-﻿using Bookalytics.Data.Models;
-using Bookalytics.Services.Contracts;
-using Bookalytics.ViewModels;
-
-using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Bookalytics.Data.Models;
+using Bookalytics.Services.Contracts;
+using Bookalytics.ViewModels;
 
 namespace Bookalytics.Services
 {

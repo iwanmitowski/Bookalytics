@@ -1,5 +1,3 @@
-using System;
-
 namespace Bookalytics.Models
 {
     public class ErrorViewModel
